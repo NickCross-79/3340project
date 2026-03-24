@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeNest | Create Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&family=Sora:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">TradeNest</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html#discover">Discover</a></li>
+          <li><a href="index.html#categories">Categories</a></li>
+          <li><a href="index.html#sell">Sell</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-outline" href="login.html">Sign In</a>
+    </header>
+
+    <main class="auth-page">
+      <div class="auth-card">
+        <h1>Create your account</h1>
+        <p class="subtitle">Join TradeNest and start buying or selling locally</p>
+
+        <form class="auth-form" action="#" method="post">
+          <div class="split-fields">
+            <div class="field">
+              <label for="first-name">First name</label>
+              <input
+                type="text"
+                id="first-name"
+                name="firstName"
+                placeholder="Alex"
+                autocomplete="given-name"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="last-name">Last name</label>
+              <input
+                type="text"
+                id="last-name"
+                name="lastName"
+                placeholder="Johnson"
+                autocomplete="family-name"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="register-email">Email</label>
+            <input
+              type="email"
+              id="register-email"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="register-password">Password</label>
+            <input
+              type="password"
+              id="register-password"
+              name="password"
+              placeholder="Create a password"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="confirm-password">Confirm password</label>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirmPassword"
+              placeholder="Re-enter password"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+
+          <label class="check-row" for="terms">
+            <input type="checkbox" id="terms" name="terms" required />
+            <span>I agree to the Terms and Community Guidelines.</span>
+          </label>
+
+          <button class="btn btn-primary btn-full" type="submit">Create Account</button>
+        </form>
+
+        <p class="auth-footer-note">
+          Already have an account?
+          <a href="login.html">Sign in</a>
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer"></footer>
+  </body>
+</html>

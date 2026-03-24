@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeNest | Buy & Sell Anything</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&family=Sora:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">TradeNest</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#discover">Discover</a></li>
+          <li><a href="#categories">Categories</a></li>
+          <li><a href="product.html">Product</a></li>
+          <li><a href="#sell">Sell</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-outline" href="login.html">Sign In</a>
+    </header>
+
+    <main>
+      <section class="hero container">
+        <div class="hero-copy">
+          <h1>Buy local. Sell fast. Keep things moving.</h1>
+          <p class="subtitle">
+            A mock homepage concept for a modern buy/sell platform where listings
+            feel alive, trusted, and easy to browse.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary">Start Buying</button>
+            <button class="btn btn-light">List an Item</button>
+          </div>
+          <form class="search-row" action="#" method="get">
+            <input
+              type="text"
+              placeholder="Search phones, furniture, bikes, and more..."
+              aria-label="Search listings"
+            />
+            <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+        </div>
+
+        <div class="hero-card">
+          <h2>Trending Today</h2>
+          <ul>
+            <li>
+              <span>Refurbished Laptop</span>
+              <strong>$420</strong>
+            </li>
+            <li>
+              <span>Road Bike - 21 Speed</span>
+              <strong>$280</strong>
+            </li>
+            <li>
+              <span>Mid-century Desk</span>
+              <strong>$190</strong>
+            </li>
+            <li>
+              <span>Mirrorless Camera Kit</span>
+              <strong>$640</strong>
+            </li>
+          </ul>
+          <p>1,245 active local listings</p>
+        </div>
+      </section>
+
+      <section id="categories" class="container section-gap">
+        <div class="section-heading">
+          <h2>Shop by Category</h2>
+          <a href="#">View all</a>
+        </div>
+        <div class="category-grid">
+          <article class="tile">
+            <h3>Electronics</h3>
+            <p>Phones, laptops, speakers, and accessories.</p>
+          </article>
+          <article class="tile">
+            <h3>Home</h3>
+            <p>Furniture, decor, kitchen gear, and appliances.</p>
+          </article>
+          <article class="tile">
+            <h3>Fashion</h3>
+            <p>Streetwear, vintage finds, and daily essentials.</p>
+          </article>
+          <article class="tile">
+            <h3>Vehicles</h3>
+            <p>Bikes, scooters, and commuter-ready wheels.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="discover" class="container section-gap">
+        <div class="section-heading">
+          <h2>Featured Listings</h2>
+          <a href="#">Explore feed</a>
+        </div>
+        <div class="listing-grid">
+          <article class="listing-card">
+            <div class="listing-image listing-a"></div>
+            <div class="listing-body">
+              <h3>Noise-Canceling Headphones</h3>
+              <p>Like new, used for 3 months.</p>
+              <div class="listing-meta">
+                <span>$120</span>
+                <small>2 km away</small>
+              </div>
+              <a class="listing-link" href="product.html">View details</a>
+            </div>
+          </article>
+          <article class="listing-card">
+            <div class="listing-image listing-b"></div>
+            <div class="listing-body">
+              <h3>Minimal Coffee Table</h3>
+              <p>Solid oak finish, pickup preferred.</p>
+              <div class="listing-meta">
+                <span>$95</span>
+                <small>5 km away</small>
+              </div>
+            </div>
+          </article>
+          <article class="listing-card">
+            <div class="listing-image listing-c"></div>
+            <div class="listing-body">
+              <h3>Gaming Console Bundle</h3>
+              <p>Console, 2 controllers, and 4 games.</p>
+              <div class="listing-meta">
+                <span>$310</span>
+                <small>1 km away</small>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="sell" class="container cta section-gap">
+        <h2>Turn clutter into cash in minutes</h2>
+        <p>
+          Snap photos, set your price, and reach verified local buyers with one
+          listing flow.
+        </p>
+        <button class="btn btn-primary">Post Your First Listing</button>
+      </section>
+    </main>
+
+    <footer id="about" class="site-footer"></footer>
+  </body>
+</html>
