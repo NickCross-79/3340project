@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Lancer Loot</title>
+    <link id="theme-style" rel="stylesheet" href="../css/default-theme.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.getElementById('theme-style').href='../css/'+t;})();</script>
+    <link rel="stylesheet" href="../css/form-and-help.css">
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <div class="page-container">
+        <div class="form-card">
+            <h1>Contact Us</h1>
+            <form id="contact-form" action="../php/contact/send.php" method="post">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject:</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="6" required></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit">Send Message</button>
+                    <button type="reset">Reset</button>
+                </div>
+            </form>
+            <script>
+                const params = new URLSearchParams(location.search);
+                if (params.get('success') === 'message_sent') {
+                    const div = document.createElement('p');
+                    div.style.cssText = 'color:#1a7a1a;background:#efffef;padding:8px;border-radius:4px;margin-bottom:12px;';
+                    div.textContent = 'Your message has been sent!';
+                    document.getElementById('contact-form').prepend(div);
+                } else if (params.get('error')) {
+                    const msgs = { missing_fields: 'Please fill in all fields.', invalid_email: 'Please enter a valid email address.' };
+                    const div = document.createElement('p');
+                    div.style.cssText = 'color:#c00;background:#fee;padding:8px;border-radius:4px;margin-bottom:12px;';
+                    div.textContent = msgs[params.get('error')] || 'An error occurred.';
+                    document.getElementById('contact-form').prepend(div);
+                }
+            </script>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 Lancer Loot</footer>
+
+    <script src="../js/scripts.js"></script>
+</body>
+</html>

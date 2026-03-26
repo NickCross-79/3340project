@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lancer Loot | Register</title>
+    <link id="theme-style" rel="stylesheet" href="../css/default-theme.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.getElementById('theme-style').href='../css/'+t;})();</script>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/form-and-help.css">
+</head>
+<body>
+
+    <div id="header-container"></div>
+
+    <div class="auth-wrap">
+        <div class="auth-box">
+            <h1>Create an Account</h1>
+            <p>Join Lancer Loot and start buying or selling locally</p>
+            <form action="../php/auth/register.php" method="post">
+                <div class="name-row">
+                    <div>
+                        <label for="first-name">First name</label>
+                        <input type="text" id="first-name" name="firstName" placeholder="Alex" autocomplete="given-name" required>
+                    </div>
+                    <div>
+                        <label for="last-name">Last name</label>
+                        <input type="text" id="last-name" name="lastName" placeholder="Johnson" autocomplete="family-name" required>
+                    </div>
+                </div>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a password" autocomplete="new-password" required>
+
+                <label for="confirm-password">Confirm password</label>
+                <input type="password" id="confirm-password" name="confirmPassword" placeholder="Re-enter password" autocomplete="new-password" required>
+
+                <label class="check-row" for="terms">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <span>I agree to the Terms and Community Guidelines.</span>
+                </label>
+
+                <button type="submit" class="btn-accent">Create Account</button>
+            </form>
+            <p class="note">Already have an account? <a href="login.html">Sign in</a></p>
+            <script>
+                const params = new URLSearchParams(location.search);
+                const msgs = {
+                    missing_fields:    'Please fill in all fields.',
+                    invalid_email:     'Please enter a valid email address.',
+                    weak_password:     'Password must be at least 8 characters.',
+                    password_mismatch: 'Passwords do not match.',
+                    email_taken:       'An account with that email already exists.',
+                    username_taken:    'That name is already in use. Try a different one.',
+                };
+                if (params.get('error')) {
+                    const div = document.createElement('p');
+                    div.style.cssText = 'color:#c00;background:#fee;padding:8px;border-radius:4px;margin-bottom:12px;';
+                    div.textContent = msgs[params.get('error')] || 'An error occurred. Please try again.';
+                    document.querySelector('.auth-box').prepend(div);
+                }
+            </script>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 Lancer Loot</footer>
+
+    <script src="../js/scripts.js"></script>
+</body>
+</html>

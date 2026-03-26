@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lancer Loot | Product</title>
+    <link id="theme-style" rel="stylesheet" href="../css/default-theme.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.getElementById('theme-style').href='../css/'+t;})();</script>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/form-and-help.css">
+</head>
+<body>
+
+    <div id="header-container"></div>
+
+    <div class="section">
+        <p class="breadcrumbs" id="product-breadcrumb"><a href="../index.html">Home</a></p>
+
+        <div class="product-main">
+            <div class="product-image" id="product-image"></div>
+            <div class="product-details">
+                <h1 id="product-title">Loading…</h1>
+                <div class="price" id="product-price"></div>
+                <div class="location" id="product-location"></div>
+                <p id="product-description"></p>
+                <ul>
+                    <li id="product-condition"></li>
+                    <li id="product-category"></li>
+                    <li id="product-status"></li>
+                    <li id="product-posted"></li>
+                </ul>
+                <form method="post" action="../php/cart/add.php" style="display:inline;">
+                    <input type="hidden" name="product_id" id="add-to-cart-product-id" value="">
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" id="add-to-cart-btn" class="btn btn-primary">Add to Cart</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h2>Description</h2>
+                <p id="product-description-card">Loading…</p>
+            </div>
+            <div class="info-card">
+                <h2>Seller</h2>
+                <p><strong id="product-seller-name">Loading…</strong></p>
+            </div>
+        </div>
+
+        <div style="margin-top: 32px;">
+            <div class="section-header">
+                <h2>Similar Listings</h2>
+                <a href="../index.html#listings">Back to listings</a>
+            </div>
+            <div class="similar-grid" id="similar-grid">
+                <p style="color:var(--muted)">Loading…</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 Lancer Loot</footer>
+
+    <script src="../js/scripts.js"></script>
+</body>
+</html>

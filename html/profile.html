@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Lancer Loot</title>
+    <link id="theme-style" rel="stylesheet" href="../css/default-theme.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.getElementById('theme-style').href='../css/'+t;})();</script>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/form-and-help.css">
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <div class="section" id="profile-section">
+        <h1 style="margin-bottom:20px;">My Profile</h1>
+
+        <script>
+            (function () {
+                const params = new URLSearchParams(location.search);
+                if (params.get('success') === 'order_placed') {
+                    const div = document.createElement('p');
+                    div.style.cssText = 'color:#060;background:#efe;padding:8px;border-radius:4px;margin-bottom:12px;';
+                    div.textContent = 'Your order has been placed successfully!';
+                    document.getElementById('profile-section').prepend(div);
+                }
+                if (params.get('success') === 'listing_deleted') {
+                    const div = document.createElement('p');
+                    div.style.cssText = 'color:#060;background:#efe;padding:8px;border-radius:4px;margin-bottom:12px;';
+                    div.textContent = 'Listing deleted.';
+                    document.getElementById('profile-section').prepend(div);
+                }
+            })();
+        </script>
+
+        <h2>Account Information</h2>
+        <p><strong>Name:</strong> <span id="profile-name">Loading…</span></p>
+        <p><strong>Email:</strong> <span id="profile-email"></span></p>
+        <p><strong>Phone:</strong> <span id="profile-phone"></span></p>
+        <p><strong>Location:</strong> <span id="profile-location"></span></p>
+        <p id="profile-bio-line"><strong>Bio:</strong> <span id="profile-bio"></span></p>
+
+        <hr>
+
+        <h2>My Listings</h2>
+        <table border="1" cellpadding="10" cellspacing="0" width="100%" style="border-collapse:collapse;margin-bottom:24px;">
+            <thead>
+                <tr><th>Title</th><th>Price</th><th>Status</th><th>Action</th></tr>
+            </thead>
+            <tbody id="my-listings-body">
+                <tr><td colspan="4" style="color:var(--muted);">Loading…</td></tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h2>Recent Orders</h2>
+        <table border="1" cellpadding="10" cellspacing="0" width="100%" style="border-collapse:collapse;">
+            <thead>
+                <tr><th>Order ID</th><th>Date</th><th>Status</th><th>Total</th></tr>
+            </thead>
+            <tbody id="orders-body">
+                <tr><td colspan="4" style="color:var(--muted);">Loading…</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer>&copy; 2026 Lancer Loot</footer>
+
+    <script src="../js/scripts.js"></script>
+</body>
+</html>

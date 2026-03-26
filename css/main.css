@@ -1,0 +1,314 @@
+/* ================================================================
+   main.css — shared page layout for Lancer Loot
+   Requires a theme CSS loaded first that defines CSS variables:
+   --bg, --surface, --ink, --muted, --brand, --brand-deep,
+   --line, --accent, --r
+   ================================================================ */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+}
+
+/* ---- Footer ---- */
+footer {
+    background: var(--ink);
+    color: #aaa;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.85rem;
+    margin-top: 40px;
+}
+
+/* ---- Hero ---- */
+.hero {
+    background: var(--surface);
+    color: var(--ink);
+    text-align: center;
+    padding: 48px 24px;
+}
+.hero h1 { font-size: 2rem; margin-bottom: 8px; }
+.hero p  { font-size: 1rem; margin-bottom: 20px; }
+.hero input[type="search"] {
+    padding: 10px 16px;
+    width: 300px;
+    max-width: 90%;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    font-size: 0.95rem;
+    outline: none;
+}
+.hero button {
+    padding: 10px 18px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+.hero button:hover { background: var(--brand-deep); }
+
+/* ---- Content sections ---- */
+.section {
+    padding: 32px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.section h2 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 8px;
+}
+
+/* ---- Listings grid ---- */
+.listings {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+.card {
+    background: var(--bg);
+    border-radius: var(--r);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.card img, .card-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background: var(--line);
+    display: block;
+}
+.card-body { padding: 12px; }
+.card-body h3 { font-size: 1rem; margin-bottom: 4px; }
+.card-body .price { color: var(--accent); font-weight: bold; font-size: 1.1rem; }
+.card-body .location,
+.card-body .dist { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+.card-body .btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 7px 14px;
+    background: var(--brand-deep);
+    color: #fff;
+    border-radius: var(--r);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+}
+.card-body .btn:hover { background: var(--ink); }
+
+/* ---- Sell / post listing form ---- */
+.sell-form {
+    background: var(--bg);
+    padding: 24px;
+    border-radius: var(--r);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    max-width: 500px;
+}
+.sell-form label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+.sell-form input,
+.sell-form textarea,
+.sell-form select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    background: var(--bg);
+    color: var(--ink);
+}
+.sell-form textarea { height: 80px; resize: vertical; }
+.sell-form button {
+    padding: 10px 24px;
+    background: var(--accent);
+    color: var(--ink);
+    border: none;
+    border-radius: var(--r);
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+.sell-form button:hover { background: var(--brand-deep); color: #fff; }
+
+/* ---- Auth pages (login / register) ---- */
+.auth-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 48px 24px;
+}
+.auth-box {
+    background: var(--bg);
+    padding: 32px;
+    border-radius: var(--r);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 420px;
+}
+.auth-box h1 {
+    font-size: 1.5rem;
+    margin: 0 0 6px;
+    text-align: left;
+}
+.auth-box > p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0 0 20px;
+}
+.auth-box label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+.auth-box input[type="text"],
+.auth-box input[type="email"],
+.auth-box input[type="password"] {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    background: var(--bg);
+    color: var(--ink);
+}
+.auth-box button {
+    width: 100%;
+    padding: 10px;
+    background: var(--brand-deep);
+    color: #fff;
+    border: none;
+    border-radius: var(--r);
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+.auth-box button:hover { background: var(--ink); }
+.auth-box .note {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 16px 0 0;
+    text-align: center;
+}
+.auth-box .note a { color: var(--brand-deep); text-decoration: none; }
+.auth-box .note a:hover { text-decoration: underline; }
+
+/* Register — green create-account button */
+.auth-box .btn-accent {
+    background: var(--accent);
+    color: var(--ink);
+}
+.auth-box .btn-accent:hover { background: var(--brand-deep); color: #fff; }
+
+/* Register name row */
+.name-row { display: flex; gap: 12px; }
+.name-row > div { flex: 1; }
+.check-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+/* ---- Product page ---- */
+.breadcrumbs { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
+.breadcrumbs a { color: var(--brand-deep); text-decoration: none; }
+.breadcrumbs a:hover { text-decoration: underline; }
+
+.product-main { display: flex; gap: 24px; flex-wrap: wrap; }
+.product-image {
+    width: 100%;
+    max-width: 380px;
+    height: 260px;
+    background: var(--line);
+    border-radius: var(--r);
+}
+.product-details { flex: 1; min-width: 240px; }
+.product-details h1 {
+    font-size: 1.5rem;
+    margin: 0 0 8px;
+    text-align: left;
+}
+.product-details .price {
+    color: var(--accent);
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+.product-details .location {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: 0 0 12px;
+}
+.product-details ul { list-style: none; padding: 0; margin-bottom: 16px; }
+.product-details ul li {
+    font-size: 0.9rem;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--line);
+}
+.product-details p {
+    font-size: 0.9rem;
+    color: var(--ink);
+    margin: 0 0 16px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 9px 18px;
+    border-radius: var(--r);
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: none;
+    margin-right: 8px;
+}
+.btn-primary { background: var(--brand-deep); color: #fff; }
+.btn-primary:hover { background: var(--ink); }
+.btn-secondary { background: var(--surface); color: var(--ink); }
+.btn-secondary:hover { background: var(--line); }
+
+.info-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 32px; }
+.info-card {
+    background: var(--bg);
+    border-radius: var(--r);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    flex: 1;
+    min-width: 240px;
+}
+.info-card h2 { font-size: 1.1rem; margin-bottom: 10px; }
+.info-card p { font-size: 0.9rem; color: var(--ink); margin: 0 0 8px; }
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.section-header h2 { font-size: 1.2rem; }
+.section-header a { font-size: 0.85rem; color: var(--brand-deep); text-decoration: none; }
+.section-header a:hover { text-decoration: underline; }
+
+.similar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}

@@ -64,3 +64,56 @@ INSERT INTO Products (cat_id, seller_id, title, description, price, condition_st
 (9, 3, 'Retro Arcade Stick', 'Sanwa buttons for authentic arcade feel.', 130.00, 'Like New'),
 (10, 1, 'Acoustic Guitar', 'Great starter guitar with rich warm tone.', 180.00, 'Good'),
 (10, 1, 'Solar Power Bank', 'Charges via sunlight, rugged and waterproof.', 35.75, 'New');
+
+-- ----------------------------------------------------------------
+-- Additional tables required by the PHP backend
+-- ----------------------------------------------------------------
+
+ALTER TABLE Users
+    ADD COLUMN IF NOT EXISTS phone    VARCHAR(20)  DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS location VARCHAR(100) DEFAULT NULL;
+
+CREATE TABLE IF NOT EXISTS Cart_Items (
+    user_id    INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity   INT NOT NULL DEFAULT 1,
+    added_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, product_id),
+    FOREIGN KEY (user_id)    REFERENCES Users(user_id)    ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS Orders (
+    order_id        INT PRIMARY KEY AUTO_INCREMENT,
+    buyer_id        INT NOT NULL,
+    full_name       VARCHAR(150) NOT NULL,
+    email           VARCHAR(100) NOT NULL,
+    address         VARCHAR(255) NOT NULL,
+    city            VARCHAR(100) NOT NULL,
+    postal_code     VARCHAR(20)  NOT NULL,
+    delivery_method ENUM('Delivery', 'Pickup') NOT NULL,
+    payment_method  ENUM('Credit Card', 'Debit Card', 'Cash on Pickup') NOT NULL,
+    total_amount    DECIMAL(10,2) NOT NULL,
+    status          ENUM('Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled') DEFAULT 'Pending',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (buyer_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS Order_Items (
+    item_id            INT PRIMARY KEY AUTO_INCREMENT,
+    order_id           INT NOT NULL,
+    product_id         INT,
+    quantity           INT NOT NULL DEFAULT 1,
+    price_at_purchase  DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id)   REFERENCES Orders(order_id)   ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS Contact_Messages (
+    message_id INT PRIMARY KEY AUTO_INCREMENT,
+    name       VARCHAR(100) NOT NULL,
+    email      VARCHAR(100) NOT NULL,
+    subject    VARCHAR(255) NOT NULL,
+    message    TEXT         NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

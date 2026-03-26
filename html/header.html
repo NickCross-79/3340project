@@ -1,0 +1,45 @@
+<header class="site-header">
+    <div class="logo">
+        <a href="../index.html">
+            <img src="../assets/lancer-loot-logo.png" alt="Lancer Loot Logo">
+        </a>
+    </div>
+
+    <nav class="header-nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../index.html#listings" class="nav-link">Browse</a>
+        <a href="about.html" class="nav-link">About</a>
+        <span id="nav-sell" style="display:none;"><a href="add-item-to-sell.html" class="nav-link">Sell</a></span>
+        <a href="help.html" class="nav-link">Help</a>
+    </nav>
+
+    <div class="header-right">
+        <form class="search-form" action="search.html" method="get">
+            <input type="text" name="q" placeholder="Search Items..." aria-label="Search Items">
+            <button type="submit">Search</button>
+        </form>
+
+        <a href="cart.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Cart</a>
+
+        <select class="theme-dropdown" onchange="setTheme(this.value)">
+            <option value="../css/default-theme.css">Default</option>
+            <option value="../css/theme3.css">Playful</option>
+            <option value="../css/winter-theme.css">Winter</option>
+            <option value="../css/theme-blue-gold.css">Blue &amp; Gold</option>
+            <option value="../css/theme-earthy.css">Earthy</option>
+            <option value="../css/theme-green.css">Nature</option>
+        </select>
+
+        <!-- Shown when logged in -->
+        <div id="auth-logged-in" style="display:none;align-items:center;gap:8px;">
+            <a href="profile.html" class="profile-icon" title="My Profile"><i class="fa-solid fa-user"></i> <span id="header-username"></span></a>
+            <a href="../php/auth/logout.php" class="nav-link logout-btn">Logout</a>
+        </div>
+
+        <!-- Shown when logged out -->
+        <div id="auth-logged-out" style="display:flex;align-items:center;gap:8px;">
+            <a href="login.html" class="nav-link btn-outline">Sign In</a>
+            <a href="register.html" class="nav-link btn-accent">Register</a>
+        </div>
+    </div>
+</header>

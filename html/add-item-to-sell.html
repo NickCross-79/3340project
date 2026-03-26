@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Listing - Lancer Loot</title>
+    <link id="theme-style" rel="stylesheet" href="../css/default-theme.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.getElementById('theme-style').href='../css/'+t;})();</script>
+    <link rel="stylesheet" href="../css/form-and-help.css">
+</head>
+<body>
+<div id="header-container"></div>
+
+<script>
+    // Redirect to login if not authenticated
+    (function () {
+        const isRoot = !document.location.pathname.includes('/html/');
+        const phpBase = isRoot ? 'php/' : '../php/';
+        fetch(phpBase + 'auth/check.php')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.loggedIn) {
+                    window.location.href = 'login.html?redirect=add-item-to-sell.html';
+                }
+            })
+            .catch(() => {
+                window.location.href = 'login.html';
+            });
+    })();
+</script>
+
+<!--Creates a form for a user to submit an item listing-->
+<div class="page-container">
+    <div class="form-card">
+        <h1>Create Listing</h1>
+        <form action="../php/listings/create.php" method="POST" enctype="multipart/form-data" id="listingForm">
+            <div class="form-group">
+                <label for="productName">Name:</label>
+                <input type="text" id="productName" name="productName" required><br><br>
+            </div>
+
+            <!--Allows user to enter price. Formats price-->
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <div class="price-input">
+                    <span>$</span>
+                    <input type="number" id="price" name="price" step="0.01" min="0" required><br><br>
+                </div>
+            </div>
+
+            <!--Creates category drop-down-->
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <select id="category" name="category" required>
+                    <option value="bmm">Books, Movies & Music</option>
+                    <option value="clothing">Clothing & Accessories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="sports">Sports & Outdoors</option>
+                    <option value="tools">Tools & Hardware</option>
+                    <option value="toys">Toys & Hobbies</option>
+                    <option value="vehicles">Vehicles</option>
+                    <option value="videogames">Video Games</option>
+                    <option value="misc">Miscellaneous</option>
+                </select><br><br>
+            </div>
+
+            <!--Creates description-->
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="15" cols="40" required></textarea><br><br>
+            </div>
+
+            <!--Creates Condition drop-down-->
+            <div class="form-group">
+                <label for="condition">Condition:</label>
+                <select id="condition" name="condition" required>
+                    <option value="new">New</option>
+                    <option value="like-new">Like New</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="for-parts">For Parts</option>
+                </select><br><br>
+            </div>
+
+            <!--Allows user to upload image(s)-->
+            <div class="form-group">
+                <label for="productImage">Images:</label>
+                <input type="file" id="productImage" name="productImage[]" accept="image/*" multiple required><br><br>
+            </div>
+            
+            <!--Allows user to enter the number of that item they are selling-->
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" min="1" required><br><br>
+            </div>
+
+            <!--Allows user to enter their location-->
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" placeholder="e.g. Windsor, ON" required><br><br>
+            </div>
+
+            <!--User can submit or reset the form-->
+            <div class="button-group">
+                <button type="submit">Submit Listing</button>
+                <button type="reset">Reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Rounds number entered to be 2 decimal places (ex 5.736 = 5.74)-->
+<script>
+    document.getElementById("price").addEventListener("blur", function() {
+        let value = parseFloat(this.value);
+        if (!isNaN(value)) {
+            this.value = value.toFixed(2);
+        }
+    });
+
+    // Show error messages from query string
+    (function () {
+        const msgs = {
+            missing_fields:    'Please fill in all required fields.',
+            invalid_price:     'Please enter a valid price.',
+            invalid_category:  'Please select a valid category.',
+            invalid_condition: 'Please select a valid condition.',
+            invalid_image:     'Invalid image file. Please upload a JPG, PNG, WebP, or GIF.',
+        };
+        const error = new URLSearchParams(location.search).get('error');
+        if (error) {
+            const div = document.createElement('p');
+            div.style.cssText = 'color:#c00;background:#fee;padding:8px;border-radius:4px;margin-bottom:12px;';
+            div.textContent = msgs[error] || 'An error occurred. Please try again.';
+            document.querySelector('#listingForm').prepend(div);
+        }
+    })();
+</script>
+
+<script src="../js/scripts.js"></script>
+
+<footer>&copy; 2026 Lancer Loot</footer>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - Lancer Loot</title>
+    <link id="theme-style" rel="stylesheet" href="../css/default-theme.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.getElementById('theme-style').href='../css/'+t;})();</script>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/form-and-help.css">
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <div class="section">
+        <h1 style="margin-bottom:20px;">Your Cart</h1>
+
+        <p id="cart-empty" style="display:none;color:var(--muted);">Your cart is empty. <a href="../index.html">Browse listings</a></p>
+
+        <table border="1" cellpadding="10" cellspacing="0" width="100%" style="border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="cart-body">
+                <tr><td colspan="5" style="color:var(--muted);">Loading…</td></tr>
+            </tbody>
+        </table>
+
+        <div id="cart-summary" style="display:none;margin-top:20px;">
+            <h2>Cart Summary</h2>
+            <p>Subtotal: <span id="cart-subtotal">$0.00</span></p>
+            <p>Estimated Tax (13%): <span id="cart-tax">$0.00</span></p>
+            <p><strong>Total: <span id="cart-total">$0.00</span></strong></p>
+            <p style="margin-top:16px;">
+                <a href="checkout.html" class="btn" style="padding:12px 28px;font-size:1rem;">Proceed to Checkout</a>
+            </p>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 Lancer Loot</footer>
+
+    <script src="../js/scripts.js"></script>
+</body>
+</html>

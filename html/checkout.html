@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Lancer Loot</title>
+    <link id="theme-style" rel="stylesheet" href="../css/default-theme.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.getElementById('theme-style').href='../css/'+t;})();</script>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/form-and-help.css">
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <div class="section">
+        <h1 style="margin-bottom:20px;">Checkout</h1>
+
+        <h2>Shipping &amp; Payment</h2>
+
+        <form action="../php/orders/place-order.php" method="post" style="max-width:560px;">
+            <p>
+                <label for="fullName"><strong>Full Name</strong></label><br>
+                <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" style="width:100%;" required>
+            </p>
+            <p>
+                <label for="email"><strong>Email Address</strong></label><br>
+                <input type="email" id="email" name="email" placeholder="Enter your email" style="width:100%;" required>
+            </p>
+            <p>
+                <label for="address"><strong>Street Address</strong></label><br>
+                <input type="text" id="address" name="address" placeholder="123 Main Street" style="width:100%;" required>
+            </p>
+            <p>
+                <label for="city"><strong>City</strong></label><br>
+                <input type="text" id="city" name="city" placeholder="Windsor" style="width:100%;" required>
+            </p>
+            <p>
+                <label for="postal"><strong>Postal Code</strong></label><br>
+                <input type="text" id="postal" name="postal" placeholder="A1A 1A1" style="width:100%;" required>
+            </p>
+            <p>
+                <label for="delivery"><strong>Delivery Method</strong></label><br>
+                <select id="delivery" name="delivery" style="width:100%;">
+                    <option value="Delivery">Delivery</option>
+                    <option value="Pickup">Pickup</option>
+                </select>
+            </p>
+            <p>
+                <label for="payment"><strong>Payment Method</strong></label><br>
+                <select id="payment" name="payment" style="width:100%;">
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Debit Card">Debit Card</option>
+                    <option value="Cash on Pickup">Cash on Pickup</option>
+                </select>
+            </p>
+            <p>
+                <label for="notes"><strong>Order Notes</strong> (optional)</label><br>
+                <textarea id="notes" name="notes" rows="4" placeholder="Special delivery instructions…" style="width:100%;"></textarea>
+            </p>
+            <p>
+                <button type="submit">Place Order</button>
+            </p>
+            <script>
+                const params = new URLSearchParams(location.search);
+                const msgs = {
+                    missing_fields: 'Please fill in all required fields.',
+                    invalid_email:  'Please enter a valid email address.',
+                    invalid_option: 'Invalid delivery or payment option.',
+                    empty_cart:     'Your cart is empty.',
+                };
+                if (params.get('error')) {
+                    const div = document.createElement('p');
+                    div.style.cssText = 'color:#c00;background:#fee;padding:8px;border-radius:4px;margin-bottom:12px;';
+                    div.textContent = msgs[params.get('error')] || 'An error occurred. Please try again.';
+                    document.currentScript.closest('form').prepend(div);
+                }
+                if (params.get('success') === 'order_placed') {
+                    const div = document.createElement('p');
+                    div.style.cssText = 'color:#060;background:#efe;padding:8px;border-radius:4px;margin-bottom:12px;';
+                    div.textContent = 'Your order has been placed! Thank you.';
+                    document.currentScript.closest('form').prepend(div);
+                }
+            </script>
+        </form>
+    </div>
+
+    <footer>&copy; 2026 Lancer Loot</footer>
+
+    <script src="../js/scripts.js"></script>
+</body>
+</html>
