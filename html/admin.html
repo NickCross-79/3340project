@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Lancer Loot</title>
+    <link id="theme-style" rel="stylesheet" href="../css/default-theme.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.getElementById('theme-style').href='../css/'+t;})();</script>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/form-and-help.css">
+    <style>
+        /* ── Admin-specific layout ── */
+        .admin-layout {
+            display: flex;
+            gap: 0;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--line);
+            padding: 24px 0;
+        }
+        .admin-sidebar h2 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            padding: 0 20px 10px;
+        }
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 20px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--ink);
+            border-left: 3px solid transparent;
+            transition: background 0.15s, border-color 0.15s;
+            user-select: none;
+        }
+        .admin-nav-item:hover { background: var(--line); }
+        .admin-nav-item.active {
+            background: var(--bg);
+            border-left-color: var(--brand-deep);
+            font-weight: bold;
+        }
+        .admin-nav-item i { width: 18px; text-align: center; }
+
+        /* Main panel */
+        .admin-main {
+            flex: 1;
+            padding: 32px 36px;
+            min-width: 0;
+        }
+        .admin-panel { display: none; }
+        .admin-panel.active { display: block; }
+        .admin-panel h1 {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+        .admin-panel .panel-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        /* Theme cards */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+        .theme-card {
+            border: 3px solid var(--line);
+            border-radius: var(--r);
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .theme-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .theme-card.selected { border-color: var(--brand-deep); }
+        .theme-preview {
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+        }
+        .theme-preview-bar { height: 28px; width: 100%; }
+        .theme-preview-body { flex: 1; padding: 6px 8px; display: flex; gap: 5px; }
+        .theme-preview-swatch {
+            flex: 1;
+            border-radius: 3px;
+            height: 100%;
+        }
+        .theme-card-label {
+            padding: 8px 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            background: var(--surface);
+            border-top: 1px solid var(--line);
+            text-align: center;
+        }
+
+        /* Admin tables */
+        .admin-table-wrap { overflow-x: auto; }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .admin-table th, .admin-table td {
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            text-align: left;
+            vertical-align: middle;
+        }
+        .admin-table th {
+            background: var(--surface);
+            font-weight: 600;
+            color: var(--ink);
+        }
+        .admin-table tr:nth-child(even) { background: var(--surface); }
+        .admin-table tr:hover { background: var(--line); }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-admin    { background: var(--brand-deep); color: #fff; }
+        .badge-disabled { background: #c0392b; color: #fff; }
+        .badge-active   { background: #27ae60; color: #fff; }
+        .badge-available { background: #27ae60; color: #fff; }
+        .badge-sold     { background: var(--muted); color: #fff; }
+        .badge-archived { background: #e67e22; color: #fff; }
+
+        /* Toolbar */
+        .admin-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .admin-toolbar input[type="text"],
+        .admin-toolbar select {
+            padding: 7px 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            font-size: 0.9rem;
+            background: var(--bg);
+            color: var(--ink);
+        }
+        .admin-toolbar input[type="text"] { width: 220px; }
+
+        /* Buttons */
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            cursor: pointer;
+            background: var(--bg);
+            color: var(--ink);
+            transition: background 0.12s;
+        }
+        .btn-sm:hover { background: var(--line); }
+        .btn-sm.btn-danger { border-color: #c0392b; color: #c0392b; }
+        .btn-sm.btn-danger:hover { background: #c0392b; color: #fff; }
+        .btn-sm.btn-success { border-color: #27ae60; color: #27ae60; }
+        .btn-sm.btn-success:hover { background: #27ae60; color: #fff; }
+        .btn-sm.btn-primary { background: var(--brand-deep); color: #fff; border-color: var(--brand-deep); }
+        .btn-sm.btn-primary:hover { opacity: 0.85; }
+
+        /* Modal overlay */
+        .admin-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-modal-overlay.open { display: flex; }
+        .admin-modal {
+            background: var(--bg);
+            border-radius: var(--r);
+            padding: 28px 32px;
+            min-width: 360px;
+            max-width: 560px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .admin-modal h3 { margin-bottom: 18px; font-size: 1.15rem; }
+        .admin-modal .form-row { margin-bottom: 14px; }
+        .admin-modal label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; }
+        .admin-modal input,
+        .admin-modal textarea,
+        .admin-modal select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            font-size: 0.9rem;
+            background: var(--bg);
+            color: var(--ink);
+        }
+        .admin-modal textarea { min-height: 90px; resize: vertical; }
+        .admin-modal .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+        .admin-modal .close-btn {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--muted);
+            line-height: 1;
+        }
+
+        /* Documentation */
+        .doc-section { margin-bottom: 36px; }
+        .doc-section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--line);
+        }
+        .doc-section p, .doc-section li { font-size: 0.93rem; line-height: 1.65; color: var(--ink); }
+        .doc-section ul, .doc-section ol { padding-left: 22px; margin-top: 6px; }
+        .doc-section li { margin-bottom: 5px; }
+        .doc-section .doc-callout {
+            background: var(--surface);
+            border-left: 4px solid var(--brand-deep);
+            padding: 10px 14px;
+            border-radius: 0 var(--r) var(--r) 0;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+        .doc-section code {
+            background: var(--line);
+            border-radius: 3px;
+            padding: 1px 5px;
+            font-size: 0.85em;
+        }
+
+        /* Access denied */
+        #admin-access-denied { display: none; padding: 60px; text-align: center; }
+
+        /* Status / toast */
+        .admin-toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--brand-deep);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: var(--r);
+            font-size: 0.9rem;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none;
+        }
+        .admin-toast.show { opacity: 1; transform: translateY(0); }
+        .admin-toast.error { background: #c0392b; }
+
+        /* ── Monitoring panel ── */
+        .monitor-summary {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border-radius: var(--r);
+            margin-bottom: 28px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid transparent;
+        }
+        .monitor-summary.all-online  { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .monitor-summary.has-offline { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .monitor-summary.checking    { background: var(--surface); color: var(--ink); border-color: var(--line); }
+        .monitor-refresh-btn {
+            margin-left: auto;
+            padding: 6px 16px;
+            background: var(--brand-deep);
+            color: #fff;
+            border: none;
+            border-radius: var(--r);
+            cursor: pointer;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .monitor-refresh-btn:hover { opacity: 0.85; }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+        .service-card {
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            padding: 14px 16px;
+        }
+        .service-card .service-name {
+            font-weight: 600;
+            font-size: 0.92rem;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+        .service-card .service-status-row {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.88rem;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .status-dot.online   { background: #27ae60; box-shadow: 0 0 5px rgba(39,174,96,0.5); }
+        .status-dot.offline  { background: #c0392b; box-shadow: 0 0 5px rgba(192,57,43,0.5); }
+        .status-dot.checking { background: #f39c12; animation: blink-dot 1s ease-in-out infinite; }
+        @keyframes blink-dot { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+        .service-latency { font-size: 0.77rem; color: var(--muted); margin-top: 5px; }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--r);
+            padding: 18px;
+            text-align: center;
+        }
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--brand-deep);
+            line-height: 1;
+        }
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .server-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 12px;
+        }
+        .server-info-item {
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            padding: 12px 14px;
+        }
+        .server-info-item .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+        .server-info-item .info-value {
+            font-size: 0.92rem;
+            font-weight: 600;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <!-- Access denied message (shown to non-admins) -->
+    <div id="admin-access-denied">
+        <h2 style="font-size:1.4rem;margin-bottom:12px;">Access Restricted</h2>
+        <p style="color:var(--muted);margin-bottom:20px;">You must be an admin to view this page.</p>
+        <a href="profile.html" class="btn" style="background:var(--brand-deep);color:#fff;padding:10px 24px;border-radius:var(--r);text-decoration:none;">
+            Go to Profile &rarr;
+        </a>
+    </div>
+
+    <!-- Admin dashboard (shown to admins only) -->
+    <div id="admin-dashboard" style="display:none;">
+        <div class="admin-layout">
+
+            <!-- Sidebar nav -->
+            <aside class="admin-sidebar">
+                <h2>Admin Panel</h2>
+                <div class="admin-nav-item active" data-panel="themes">
+                    <i class="fa-solid fa-palette"></i> Themes
+                </div>
+                <div class="admin-nav-item" data-panel="listings">
+                    <i class="fa-solid fa-tag"></i> Listings
+                </div>
+                <div class="admin-nav-item" data-panel="users">
+                    <i class="fa-solid fa-users"></i> Users
+                </div>
+                <div class="admin-nav-item" data-panel="products">
+                    <i class="fa-solid fa-box-open"></i> Products
+                </div>
+                <div class="admin-nav-item" data-panel="monitoring">
+                    <i class="fa-solid fa-heart-pulse"></i> Monitoring
+                </div>
+                <div class="admin-nav-item" data-panel="docs">
+                    <i class="fa-solid fa-book"></i> Documentation
+                </div>
+            </aside>
+
+            <!-- Main content -->
+            <main class="admin-main">
+
+                <!-- ── THEMES PANEL ── -->
+                <section class="admin-panel active" id="panel-themes">
+                    <h1><i class="fa-solid fa-palette"></i> Theme Settings</h1>
+                    <p class="panel-desc">Choose a site-wide colour theme. Your selection is saved in the browser and applied to every page.</p>
+
+                    <div class="theme-grid" id="theme-grid">
+                        <!-- Cards injected by JS -->
+                    </div>
+
+                    <p style="font-size:0.85rem;color:var(--muted);">
+                        The selected theme is highlighted with a coloured border. Changes take effect immediately across all tabs.
+                    </p>
+                </section>
+
+                <!-- ── LISTINGS PANEL ── -->
+                <section class="admin-panel" id="panel-listings">
+                    <h1><i class="fa-solid fa-tag"></i> Listing Management</h1>
+                    <p class="panel-desc">Browse, edit, or remove any product listing on the platform.</p>
+
+                    <div class="admin-toolbar">
+                        <input type="text" id="listing-search" placeholder="Search title, description, seller…">
+                        <select id="listing-status-filter">
+                            <option value="">All statuses</option>
+                            <option value="Available">Available</option>
+                            <option value="Sold">Sold</option>
+                            <option value="Archived">Archived</option>
+                        </select>
+                        <button class="btn-sm btn-primary" onclick="adminLoadListings()">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search
+                        </button>
+                    </div>
+
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Seller</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-listings-body">
+                                <tr><td colspan="7" style="color:var(--muted);">Loading…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p id="listings-count" style="margin-top:10px;font-size:0.85rem;color:var(--muted);"></p>
+                </section>
+
+                <!-- ── USERS PANEL ── -->
+                <section class="admin-panel" id="panel-users">
+                    <h1><i class="fa-solid fa-users"></i> User Administration</h1>
+                    <p class="panel-desc">Manage user accounts — enable, disable, or promote/demote admin privileges.</p>
+
+                    <div class="admin-toolbar">
+                        <input type="text" id="user-search" placeholder="Filter by name or email…" oninput="adminFilterUsers()">
+                    </div>
+
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                    <th>Role</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-body">
+                                <tr><td colspan="7" style="color:var(--muted);">Loading…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ── DOCUMENTATION PANEL ── -->
+                <section class="admin-panel" id="panel-docs">
+                    <h1><i class="fa-solid fa-book"></i> Admin Documentation</h1>
+                    <p class="panel-desc">Reference guide for all admin features on the Lancer Loot platform.</p>
+
+                    <div class="doc-section">
+                        <h2>Overview</h2>
+                        <p>The Admin Dashboard gives privileged users visibility and control over site content and accounts. It is divided into four areas: <strong>Themes</strong>, <strong>Listings</strong>, <strong>Users</strong>, and this documentation.</p>
+                        <div class="doc-callout">
+                            <strong>Demo note:</strong> Anyone logged in can toggle their admin status on the
+                            <a href="profile.html">Profile page</a>. This is intentional for demonstration purposes.
+                        </div>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2>Theme Switcher</h2>
+                        <p>The platform ships with six colour themes. Selecting a theme changes the look of <em>every page</em> instantly.</p>
+                        <ul>
+                            <li><strong>Default</strong> – Clean white &amp; purple, the standard look.</li>
+                            <li><strong>Playful</strong> – Warm pastels with rounded corners.</li>
+                            <li><strong>Winter</strong> – Cool icy blues for a seasonal feel.</li>
+                            <li><strong>Blue &amp; Gold</strong> – University-branded palette.</li>
+                            <li><strong>Earthy</strong> – Warm browns and natural tones.</li>
+                            <li><strong>Nature</strong> – Greens and forest colours.</li>
+                        </ul>
+                        <p style="margin-top:8px;">Themes are stored in <code>localStorage</code> under the key <code>theme</code> and are applied before the page renders to prevent a flash of unstyled content.</p>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2>Listing Management</h2>
+                        <p>Admins can search, filter, edit, and delete any product listing on the platform.</p>
+                        <ol>
+                            <li>Use the <strong>search bar</strong> and <strong>status filter</strong> to narrow down results.</li>
+                            <li>Click <strong>Edit</strong> on any row to open the listing editor modal.</li>
+                            <li>Editable fields: Title, Description, Price, Category, Status, Condition.</li>
+                            <li>Click <strong>Delete</strong> to permanently remove a listing and all associated cart/order references.</li>
+                        </ol>
+                        <div class="doc-callout">
+                            Deleting a listing is irreversible. The confirmation dialog must be accepted before the deletion is processed.
+                        </div>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2>User Administration</h2>
+                        <p>The Users panel lists every registered account with their status and role.</p>
+                        <ul>
+                            <li><strong>Disable Account</strong> – Prevents the user from logging in. Existing sessions are not immediately invalidated but the next login attempt will be blocked.</li>
+                            <li><strong>Re-enable Account</strong> – Restores login access for a previously disabled user.</li>
+                            <li><strong>Grant Admin</strong> – Promotes a standard user to admin, giving them access to this dashboard.</li>
+                            <li><strong>Revoke Admin</strong> – Removes admin privileges from a user. They will retain their account but lose dashboard access.</li>
+                        </ul>
+                        <div class="doc-callout">
+                            You cannot disable your own account through this panel.
+                        </div>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2>Admin Toggle (Demo Feature)</h2>
+                        <p>Because this is a demonstration site, any logged-in user can grant or revoke their own admin rights from the <a href="profile.html">Profile page</a>. In a production environment this toggle would be removed and admin assignment would be controlled by a super-admin or directly in the database.</p>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2>Security Notes</h2>
+                        <ul>
+                            <li>All admin API endpoints verify session-level admin status server-side (<code>requireAdmin()</code>).</li>
+                            <li>Input is validated and parameterised queries are used throughout to prevent SQL injection.</li>
+                            <li>All API responses include <code>X-Content-Type-Options: nosniff</code>.</li>
+                            <li>Session cookies are <code>HttpOnly</code> and <code>SameSite=Strict</code>.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- ── PRODUCTS PANEL ── -->
+                <section class="admin-panel" id="panel-products">
+                    <h1><i class="fa-solid fa-box-open"></i> All Products</h1>
+                    <p class="panel-desc">Read-only overview of every product listed on the platform.</p>
+
+                    <div class="admin-toolbar">
+                        <input type="text" id="products-search" placeholder="Filter by title, seller, category…" oninput="adminFilterProducts()">
+                        <select id="products-status-filter" onchange="adminFilterProducts()">
+                            <option value="">All statuses</option>
+                            <option value="Available">Available</option>
+                            <option value="Sold">Sold</option>
+                            <option value="Archived">Archived</option>
+                        </select>
+                        <button class="btn-sm btn-primary" onclick="adminLoadProducts()">
+                            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                        </button>
+                    </div>
+
+                    <p id="products-count" style="margin-bottom:10px;font-size:0.85rem;color:var(--muted);"></p>
+
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Seller</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Condition</th>
+                                    <th>Status</th>
+                                    <th>Listed</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-products-body">
+                                <tr><td colspan="8" style="color:var(--muted);">Open this panel to load products.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ── MONITORING PANEL ── -->
+                <section class="admin-panel" id="panel-monitoring">
+                    <h1><i class="fa-solid fa-heart-pulse"></i> System Monitoring</h1>
+                    <p class="panel-desc">Live health status of all backend services and API endpoints.</p>
+
+                    <div id="monitor-summary" class="monitor-summary checking">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <span id="monitor-summary-text">Open this panel to run checks.</span>
+                        <button class="monitor-refresh-btn" onclick="runMonitoring()">
+                            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                        </button>
+                    </div>
+
+                    <h2 style="margin-bottom:14px;font-size:1rem;border-bottom:2px solid var(--line);padding-bottom:6px;">API Services</h2>
+                    <div class="services-grid" id="services-grid"></div>
+
+                    <h2 style="margin-bottom:14px;font-size:1rem;border-bottom:2px solid var(--line);padding-bottom:6px;">Database Statistics</h2>
+                    <div class="stats-row" id="stats-row"></div>
+
+                    <h2 style="margin-bottom:14px;font-size:1rem;border-bottom:2px solid var(--line);padding-bottom:6px;">Server Information</h2>
+                    <div class="server-info-grid" id="server-info-grid"></div>
+
+                    <p id="monitor-last-checked" style="margin-top:20px;font-size:0.82rem;color:var(--muted);"></p>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Edit Listing Modal -->
+    <div class="admin-modal-overlay" id="edit-listing-modal">
+        <div class="admin-modal">
+            <button class="close-btn" onclick="closeModal('edit-listing-modal')">&times;</button>
+            <h3>Edit Listing</h3>
+            <input type="hidden" id="edit-product-id">
+            <div class="form-row">
+                <label>Title</label>
+                <input type="text" id="edit-title">
+            </div>
+            <div class="form-row">
+                <label>Description</label>
+                <textarea id="edit-description"></textarea>
+            </div>
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div>
+                    <label>Price ($)</label>
+                    <input type="number" id="edit-price" step="0.01" min="0">
+                </div>
+                <div>
+                    <label>Category</label>
+                    <select id="edit-cat-id"></select>
+                </div>
+            </div>
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div>
+                    <label>Status</label>
+                    <select id="edit-status">
+                        <option value="Available">Available</option>
+                        <option value="Sold">Sold</option>
+                        <option value="Archived">Archived</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Condition</label>
+                    <select id="edit-condition">
+                        <option value="New">New</option>
+                        <option value="Like New">Like New</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="For Parts">For Parts</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-sm" onclick="closeModal('edit-listing-modal')">Cancel</button>
+                <button class="btn-sm btn-primary" onclick="adminSaveListing()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="admin-toast" id="admin-toast"></div>
+
+    <footer>&copy; 2026 Lancer Loot</footer>
+
+    <script src="../js/scripts.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

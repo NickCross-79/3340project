@@ -1,4 +1,16 @@
 <?php
+/**
+ * Add to Cart
+ * -----------
+ * Adds a product to the authenticated user's cart. If the product is
+ * already present, its quantity is incremented via INSERT … ON DUPLICATE
+ * KEY UPDATE instead of inserting a duplicate row.
+ *
+ * Method : POST
+ * Route  : /php/cart/add.php
+ * Auth   : Required — redirects to login.html if not authenticated
+ * Inputs : product_id (int), quantity (int, default 1)
+ */
 require_once '../config/db.php';
 require_once '../config/session.php';
 

@@ -1,4 +1,15 @@
 <?php
+/**
+ * Remove from Cart
+ * ----------------
+ * Deletes a single product from the authenticated user's Cart_Items row.
+ * After deletion the user is redirected back to the cart page.
+ *
+ * Method : POST
+ * Route  : /php/cart/remove.php
+ * Auth   : Required — redirects to login.html if not authenticated
+ * Input  : product_id (int)
+ */
 require_once '../config/db.php';
 require_once '../config/session.php';
 

@@ -1,4 +1,17 @@
 <?php
+/**
+ * Login
+ * -----
+ * Validates submitted credentials against the Users table, rejects
+ * disabled accounts, regenerates the session ID to prevent session
+ * fixation, and writes auth data (user_id, username, is_admin) to $_SESSION.
+ *
+ * Method    : POST
+ * Route     : /php/auth/login.php
+ * Inputs    : email, password
+ * On success: redirects to index.html
+ * On failure: redirects to login.html?error=<code>
+ */
 require_once '../config/db.php';
 require_once '../config/session.php';
 
@@ -29,7 +42,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 $db   = getDB();
-$stmt = $db->prepare('SELECT user_id, username, password_hash FROM Users WHERE email = ?');
+$stmt = $db->prepare('SELECT user_id, username, password_hash, is_admin, is_disabled FROM Users WHERE email = ?');
 $stmt->execute([$email]);
 $user = $stmt->fetch();
 
@@ -39,11 +52,17 @@ if (!$user || !password_verify($password, $user['password_hash'])) {
     exit;
 }
 
+if (!empty($user['is_disabled'])) {
+    header('Location: ../../html/login.html?error=account_disabled');
+    exit;
+}
+
 // Regenerate session ID on login to prevent session fixation
 session_regenerate_id(true);
 
 $_SESSION['user_id']  = (int) $user['user_id'];
 $_SESSION['username'] = $user['username'];
+$_SESSION['is_admin'] = (bool) $user['is_admin'];
 
 header('Location: ../../index.html');
 exit;

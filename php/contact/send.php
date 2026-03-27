@@ -1,4 +1,17 @@
 <?php
+/**
+ * Contact Form Handler
+ * --------------------
+ * Validates and saves a contact form submission to the Contact_Messages
+ * table. Input is truncated to column-safe lengths before insertion to
+ * guard against oversized payloads.
+ *
+ * Method : POST
+ * Route  : /php/contact/send.php
+ * Auth   : Not required
+ * Inputs : name (≤100 chars), email (≤100), subject (≤255), message (≤2000)
+ * Redirects to contact.html?success=message_sent on success.
+ */
 require_once '../config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

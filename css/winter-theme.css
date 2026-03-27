@@ -1,3 +1,20 @@
+/*
+ * Winter Theme
+ * ------------
+ * Cool icy palette with mint-green surfaces, slate-blue brand colour,
+ * and a deep purple brand-deep. Evokes a crisp winter marketplace.
+ *
+ * Variable guide:
+ *   --bg         : page background (light mint green)
+ *   --surface    : card / panel background (soft teal)
+ *   --ink        : primary text colour (deep purple)
+ *   --muted      : secondary / placeholder text (steel blue)
+ *   --brand      : primary accent (steel blue)
+ *   --brand-deep : darker accent (deep purple, hover states)
+ *   --line       : border / divider colour (steel blue)
+ *   --accent     : call-to-action accent (bright green)
+ *   --r          : default border-radius (slightly larger at 8 px)
+ */
 :root {
     --bg: #E2FEE8;
     --surface: #C2EFEB;

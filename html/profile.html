@@ -10,8 +10,11 @@
     <link rel="stylesheet" href="../css/form-and-help.css">
 </head>
 <body>
+    <!-- Injected shared header -->
     <div id="header-container"></div>
 
+    <!-- Profile section: account info, listings table, orders table, admin toggle
+         All data populated dynamically by scripts.js loadProfile() -->
     <div class="section" id="profile-section">
         <h1 style="margin-bottom:20px;">My Profile</h1>
 
@@ -63,8 +66,28 @@
                 <tr><td colspan="4" style="color:var(--muted);">Loading…</td></tr>
             </tbody>
         </table>
+
+        <hr style="margin-top:32px;">
+
+        <!-- ── Admin Access Section ── -->
+        <h2 style="margin-top:24px;">Admin Access <span style="font-size:0.75rem;font-weight:normal;color:var(--muted);">(Demo feature)</span></h2>
+        <p style="color:var(--muted);font-size:0.9rem;margin-bottom:14px;">
+            For demo purposes, any logged-in user can toggle admin rights. Admin users gain access to the Admin Dashboard.
+        </p>
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <button id="admin-toggle-btn" onclick="toggleAdminRole()"
+                    style="padding:9px 20px;border:none;border-radius:var(--r);cursor:pointer;font-size:0.95rem;background:var(--brand-deep);color:#fff;">
+                Loading…
+            </button>
+            <a id="admin-dashboard-link" href="admin.html"
+               style="display:none;padding:9px 20px;background:var(--brand-deep);color:#fff;border-radius:var(--r);text-decoration:none;font-size:0.95rem;">
+                <i class="fa-solid fa-gauge"></i> Go to Admin Dashboard
+            </a>
+        </div>
+        <p id="admin-toggle-msg" style="margin-top:10px;font-size:0.88rem;color:var(--muted);"></p>
     </div>
 
+    <!-- Footer -->
     <footer>&copy; 2026 Lancer Loot</footer>
 
     <script src="../js/scripts.js"></script>

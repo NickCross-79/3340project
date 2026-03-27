@@ -1,4 +1,17 @@
 <?php
+/**
+ * Register
+ * --------
+ * Validates registration form data, checks for duplicate email/username,
+ * hashes the password with bcrypt, inserts the new user row, and
+ * starts an authenticated session for the newly created account.
+ *
+ * Method    : POST
+ * Route     : /php/auth/register.php
+ * Inputs    : firstName, lastName, email, password, confirmPassword
+ * On success: redirects to index.html
+ * On failure: redirects to register.html?error=<code>
+ */
 require_once '../config/db.php';
 require_once '../config/session.php';
 

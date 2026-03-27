@@ -1,4 +1,19 @@
 <?php
+/**
+ * Create Listing
+ * --------------
+ * Validates the new-listing form, maps human-readable form values to their
+ * database ENUM equivalents, handles an optional image upload (MIME-validated
+ * via finfo, stored with a random hex filename), resolves the category ID,
+ * and inserts a new row into the Products table.
+ *
+ * Method : POST
+ * Route  : /php/listings/create.php
+ * Auth   : Required — redirects to login.html if not authenticated
+ * Inputs : productName, price, category, description, condition,
+ *          quantity, location, productImage (file; optional)
+ * Redirects to index.html?success=listing_created on success.
+ */
 require_once '../config/db.php';
 require_once '../config/session.php';
 

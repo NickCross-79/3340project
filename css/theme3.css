@@ -1,3 +1,21 @@
+/*
+ * Playful Theme
+ * -------------
+ * High-contrast palette with a near-white background, vivid orange
+ * accent, and bold red brand-deep. The teal --muted and --line give
+ * the layout a lively, energetic feel.
+ *
+ * Variable guide:
+ *   --bg         : page background (off-white)
+ *   --surface    : card / panel background (pure white)
+ *   --ink        : primary text colour (near-black)
+ *   --muted      : secondary / placeholder text (teal)
+ *   --brand      : primary accent (vivid orange)
+ *   --brand-deep : darker accent (bold red, hover states)
+ *   --line       : border / divider colour (teal)
+ *   --accent     : call-to-action accent (shares --brand)
+ *   --r          : default border-radius (slightly larger at 8 px)
+ */
 :root {
     --bg: #FDFFFC;
     --surface: #FFFFFF;

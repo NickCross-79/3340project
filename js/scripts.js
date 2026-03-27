@@ -1,8 +1,26 @@
+/**
+ * scripts.js
+ * ----------
+ * Shared front-end logic loaded on every page. Responsibilities:
+ *   - Path-aware header injection (root vs /html/ subdirectory)
+ *   - Theme persistence (localStorage + <link> swap)
+ *   - Auth-state check and nav element gating
+ *   - Listings grid (index page)
+ *   - Cart display & remove actions
+ *   - Profile page data rendering
+ *   - Product detail + similar-listings grid
+ *   - Messages two-column UI (conversations + thread)
+ */
+
+// Detect if the current page is at the project root or inside /html/.
+// This determines whether asset paths need a leading directory prefix.
 const isRoot = !document.location.pathname.includes('/html/');
 const headerPath = isRoot ? "html/header.html" : "header.html";
 const phpBase    = isRoot ? "php/" : "../php/";
 
 // ---- Header load ----
+// Fetch the shared header fragment, fix relative URLs for root-level pages
+// (strip one ../ prefix from paths), then inject into #header-container.
 fetch(headerPath)
     .then(response => response.text())
     .then(data => {
@@ -26,6 +44,8 @@ fetch(headerPath)
     });
 
 // ---- Theme ----
+// setTheme() is called by the <select> in header.html; it stores the bare
+// CSS filename (no path) so that the same key works on both root and /html/.
 function setTheme(value) {
     // Extract just the filename and store it portably
     const file = value.split('/').pop();
@@ -53,6 +73,8 @@ function applyTheme() {
 window.addEventListener("DOMContentLoaded", applyTheme);
 
 // ---- Auth state ----
+// Fetches the current session state from PHP and shows/hides the logged-in
+// vs logged-out header sections and the Sell / Admin nav links accordingly.
 function checkAuth() {
     fetch(phpBase + "auth/check.php")
         .then(r => r.json())
@@ -62,16 +84,19 @@ function checkAuth() {
             const usernameEl = document.getElementById("header-username");
             if (!loggedIn || !loggedOut) return;
 
-            const navSell = document.getElementById("nav-sell");
+            const navSell  = document.getElementById("nav-sell");
+            const navAdmin = document.getElementById("nav-admin");
             if (data.loggedIn) {
                 loggedIn.style.display  = "flex";
                 loggedOut.style.display = "none";
                 if (usernameEl) usernameEl.textContent = data.username;
-                if (navSell) navSell.style.display = "inline";
+                if (navSell)  navSell.style.display  = "inline";
+                if (navAdmin) navAdmin.style.display  = data.isAdmin ? "inline" : "none";
             } else {
                 loggedIn.style.display  = "none";
                 loggedOut.style.display = "flex";
-                if (navSell) navSell.style.display = "none";
+                if (navSell)  navSell.style.display  = "none";
+                if (navAdmin) navAdmin.style.display  = "none";
             }
         })
         .catch(() => {
@@ -82,6 +107,8 @@ function checkAuth() {
 }
 
 // ---- Listings (index page) ----
+// Replaces the #listings-grid contents with product cards fetched from the
+// API. An optional search query is forwarded as the ?q= parameter.
 function loadListings(query) {
     const grid = document.getElementById("listings-grid");
     if (!grid) return;
@@ -120,6 +147,8 @@ function loadListings(query) {
         });
 }
 
+// XSS-safe HTML escaper used before injecting any server-supplied strings
+// into innerHTML.  All five HTML-unsafe characters are replaced.
 function escHtml(str) {
     return String(str)
         .replace(/&/g, '&amp;')
@@ -129,6 +158,8 @@ function escHtml(str) {
 }
 
 // ---- Cart page ----
+// Fetches the current user's cart (401 = not logged in) and renders the
+// item table plus the subtotal / tax / total summary block.
 function loadCart() {
     const tbody    = document.getElementById("cart-body");
     const summary  = document.getElementById("cart-summary");
@@ -181,6 +212,9 @@ function loadCart() {
 }
 
 // ---- Profile page ----
+// Fetches account info, order history, and active listings from the PHP
+// profile endpoint, then populates each section of the profile page.
+// Also calls updateAdminToggleUI() to reflect the user's current admin state.
 function loadProfile() {
     const section = document.getElementById("profile-section");
     if (!section) return;
@@ -241,13 +275,61 @@ function loadProfile() {
                     ).join('');
                 }
             }
+
+            // Admin toggle UI
+            updateAdminToggleUI();
         })
         .catch(() => {
             section.innerHTML = '<p>Could not load profile data.</p>';
         });
 }
 
+// ---- Admin toggle (profile page) ----
+// Re-checks auth on every call so the button label and colour stay in sync
+// with the server-side is_admin value after a toggle.
+function updateAdminToggleUI() {
+    const btn     = document.getElementById("admin-toggle-btn");
+    const link    = document.getElementById("admin-dashboard-link");
+    const msg     = document.getElementById("admin-toggle-msg");
+    if (!btn) return;
+
+    fetch(phpBase + "auth/check.php")
+        .then(r => r.json())
+        .then(data => {
+            if (!data.loggedIn) return;
+            const isAdmin = !!data.isAdmin;
+            btn.textContent = isAdmin ? "Revoke Admin Role" : "Become Admin";
+            btn.style.background = isAdmin ? "#c0392b" : "var(--brand-deep)";
+            if (link) link.style.display = isAdmin ? "inline" : "none";
+            if (msg)  msg.textContent    = isAdmin
+                ? "You currently have admin privileges."
+                : "Click to gain admin access for this demo session.";
+        });
+}
+
+function toggleAdminRole() {
+    const btn = document.getElementById("admin-toggle-btn");
+    if (btn) { btn.disabled = true; btn.textContent = "Updating…"; }
+
+    fetch(phpBase + "admin/toggle-admin.php", { method: "POST" })
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                alert("Error: " + data.error);
+            } else {
+                updateAdminToggleUI();
+                // Also refresh header admin link
+                checkAuth();
+            }
+        })
+        .catch(() => alert("Could not update admin status."))
+        .finally(() => { if (btn) btn.disabled = false; });
+}
+
 // ---- Product page ----
+// Reads ?id= from the query string and fetches full product detail.
+// Also conditionally shows the "Message Seller" button if the viewer
+// is logged in and is not the seller of the listing.
 function loadProduct() {
     const params  = new URLSearchParams(location.search);
     const id      = parseInt(params.get('id'));
@@ -363,6 +445,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ---- Messages page ----
+// Checks auth before rendering the two-column layout, then loads the
+// conversation list and automatically opens any thread specified by ?with=.
+
 // State for the currently open thread
 let _msgState = { receiverId: null, productId: null };
 

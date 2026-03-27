@@ -1,3 +1,18 @@
+/*
+ * form-and-help.css
+ * -----------------
+ * Shared stylesheet used by the contact, help, login, register, and
+ * add-item pages. Contains:
+ *   - Base / reset rules (body, typography primitives)
+ *   - Centred page-container + form-card layout
+ *   - Generic form elements (inputs, selects, textareas)
+ *   - Price compound input, button group, utility button variants
+ *   - Site-wide header (logo, nav, search bar, theme dropdown, auth UI)
+ *   - Help & FAQ accordion
+ *   - Messages page two-column layout
+ */
+
+/* ---- Base ---- */
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
@@ -5,6 +20,7 @@ body {
     color: var(--ink);
 }
 
+/* ---- Centred page layout & form card ---- */
 .page-container {
     min-height: 100vh;
     display: flex;
@@ -52,6 +68,7 @@ hr {
     margin: 20px 0;
 }
 
+/* ---- Form elements ---- */
 .form-group {
     margin-bottom: 18px;
 }
@@ -73,6 +90,7 @@ input, select, textarea {
     background-color: var(--surface);
 }
 
+/* ---- Price compound input ($ prefix + numeric field) ---- */
 .price-input {
     display: flex;
 }
@@ -97,6 +115,7 @@ textarea {
     resize: vertical;
 }
 
+/* ---- Buttons & utility nav variants ---- */
 .button-group {
     display: flex;
     gap: 10px;
@@ -182,6 +201,7 @@ button[type="reset"]:hover {
     text-decoration: none;
 }
 
+/* ---- Site header ---- */
 .site-header {
     display: flex;
     justify-content: space-between;

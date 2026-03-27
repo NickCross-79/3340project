@@ -1,3 +1,20 @@
+/*
+ * Blue & Gold Theme
+ * -----------------
+ * University of Windsor-inspired palette: deep navy blue brand colour
+ * with warm gold accents, light sky-blue surfaces, and dark ink.
+ *
+ * Variable guide:
+ *   --bg         : page background
+ *   --surface    : card / panel background
+ *   --ink        : primary text colour
+ *   --muted      : secondary / placeholder text
+ *   --brand      : primary accent (gold)
+ *   --brand-deep : darker accent (navy, hover states)
+ *   --line       : border / divider colour
+ *   --accent     : call-to-action accent (shares --brand)
+ *   --r          : default border-radius
+ */
 :root {
     --bg: #fff;
     --surface: #d6eaf8;

@@ -1,4 +1,17 @@
 <?php
+/**
+ * Delete Listing
+ * --------------
+ * Verifies that the authenticated user is the original seller of the
+ * specified product before deleting it, preventing unauthorised removal
+ * of other users' listings.
+ *
+ * Method : POST
+ * Route  : /php/listings/delete.php
+ * Auth   : Required — redirects to login.html if not authenticated
+ * Input  : product_id (int)
+ * Redirects to profile.html?success=listing_deleted on success.
+ */
 require_once '../config/db.php';
 require_once '../config/session.php';
 

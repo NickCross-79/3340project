@@ -1,3 +1,21 @@
+/*
+ * Default Theme
+ * -------------
+ * Clean white-and-teal palette with a deep purple brand colour.
+ * This is the fallback theme loaded on every page before JS applies
+ * the user's saved preference from localStorage.
+ *
+ * Variable guide:
+ *   --bg         : page background
+ *   --surface    : card / panel background
+ *   --ink        : primary text colour
+ *   --muted      : secondary / placeholder text
+ *   --brand      : primary accent (buttons, highlights)
+ *   --brand-deep : darker accent (headings, hover states)
+ *   --line       : border / divider colour
+ *   --accent     : call-to-action accent (shares --brand here)
+ *   --r          : default border-radius
+ */
 :root {
     --bg: #fff;
     --surface: #c2efeb;

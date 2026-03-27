@@ -43,3 +43,22 @@ function currentUsername(): ?string {
     startSession();
     return $_SESSION['username'] ?? null;
 }
+
+function isAdmin(): bool {
+    startSession();
+    return !empty($_SESSION['is_admin']);
+}
+
+function requireAdmin(): void {
+    startSession();
+    if (!isLoggedIn()) {
+        http_response_code(401);
+        header('Content-Type: application/json');
+        exit(json_encode(['error' => 'Not authenticated']));
+    }
+    if (!isAdmin()) {
+        http_response_code(403);
+        header('Content-Type: application/json');
+        exit(json_encode(['error' => 'Admin access required']));
+    }
+}

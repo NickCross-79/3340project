@@ -1,4 +1,22 @@
 <?php
+/**
+ * Place Order
+ * -----------
+ * Processes the checkout form within a single DB transaction:
+ *   1. Validates shipping/payment fields.
+ *   2. Fetches the user's available cart items and calculates the total.
+ *   3. Inserts an order header row into Orders.
+ *   4. Inserts one row per item into Order_Items.
+ *   5. Sets each purchased product's status to "Sold".
+ *   6. Clears the user's Cart_Items on commit.
+ * The entire operation is rolled back if any step fails.
+ *
+ * Method : POST
+ * Route  : /php/orders/place-order.php
+ * Auth   : Required — redirects to login.html if not authenticated
+ * Inputs : fullName, email, address, city, postal, delivery, payment
+ * Redirects to profile.html?success=order_placed&order=<id> on success.
+ */
 require_once '../config/db.php';
 require_once '../config/session.php';
 

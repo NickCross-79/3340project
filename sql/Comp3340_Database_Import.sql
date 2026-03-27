@@ -1,3 +1,25 @@
+-- ================================================================
+-- Lancer Loot — Database Import Script
+-- Course  : COMP3340, University of Windsor
+-- Purpose : Creates all tables, seeds initial data, and adds the
+--           extra columns / tables required by the PHP back-end.
+-- Engine  : MySQL 8+ (InnoDB, utf8mb4)
+--
+-- Table summary:
+--   Users            — registered accounts (buyers & sellers)
+--   Categories       — product taxonomy with Font Awesome icon codes
+--   Products         — item listings posted by sellers
+--   Cart_Items       — per-user shopping cart (composite PK)
+--   Orders           — checkout order headers
+--   Order_Items      — individual line items within an order
+--   Contact_Messages — public contact form submissions
+--   Messages         — direct buyer↔seller messaging
+-- ================================================================
+
+-- ---- Users ----
+-- Stores registered accounts. is_admin controls dashboard access.
+-- is_disabled allows admins to lock an account without deleting it.
+-- phone and location are optional profile fields added via ALTER TABLE.
 CREATE TABLE Users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -9,12 +31,19 @@ CREATE TABLE Users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ---- Categories ----
+-- Lookup table for product taxonomy. cat_icon is a Font Awesome class
+-- (e.g. 'fa-laptop') used to render an icon beside the category name.
 CREATE TABLE Categories (
     cat_id INT PRIMARY KEY AUTO_INCREMENT,
     cat_name VARCHAR(100) NOT NULL UNIQUE,
     cat_icon VARCHAR(50) DEFAULT 'fa-tag' 
 );
 
+-- ---- Products ----
+-- Core listing table. status tracks availability: 'Available' → visible
+-- to buyers; 'Sold' → purchased via checkout; 'Archived' → hidden.
+-- Cascades on seller delete so orphan listings are cleaned up automatically.
 CREATE TABLE Products (
     product_id INT PRIMARY KEY AUTO_INCREMENT,
     seller_id INT,
@@ -30,6 +59,8 @@ CREATE TABLE Products (
     FOREIGN KEY (cat_id) REFERENCES Categories(cat_id) ON DELETE SET NULL
 );
 
+-- ---- Seed data ----
+-- Four demo users (one admin) and 20 product listings across all categories.
 INSERT INTO Users (username, email, password_hash, bio, is_admin) VALUES 
 ('Nancy Regan', 'nregan@uwindsor.ca', 'AdminHash123', 'System Administrator.', 1),
 ('Bill Smith', 'bsmith@uwindsor.ca', 'BillHash123', 'Student selling textbooks and furniture.', 0),
@@ -69,10 +100,20 @@ INSERT INTO Products (cat_id, seller_id, title, description, price, condition_st
 -- Additional tables required by the PHP backend
 -- ----------------------------------------------------------------
 
-ALTER TABLE Users
-    ADD COLUMN IF NOT EXISTS phone    VARCHAR(20)  DEFAULT NULL,
-    ADD COLUMN IF NOT EXISTS location VARCHAR(100) DEFAULT NULL;
+-- ----------------------------------------------------------------
+-- Additional columns and tables required by the PHP backend
+-- (safe to run on an existing database — IF NOT EXISTS / IF NOT EXISTS guards)
+-- ----------------------------------------------------------------
 
+-- Add optional profile fields and the account-disable flag to Users.
+ALTER TABLE Users
+    ADD COLUMN IF NOT EXISTS phone       VARCHAR(20)  DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS location    VARCHAR(100) DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS is_disabled TINYINT(1)   DEFAULT 0;
+
+-- ---- Cart_Items ----
+-- Composite primary key (user_id, product_id) ensures one row per product
+-- per user; quantity is incremented on duplicate via the PHP upsert query.
 CREATE TABLE IF NOT EXISTS Cart_Items (
     user_id    INT NOT NULL,
     product_id INT NOT NULL,
@@ -83,6 +124,10 @@ CREATE TABLE IF NOT EXISTS Cart_Items (
     FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE CASCADE
 );
 
+-- ---- Orders ----
+-- One row per completed checkout. delivery_method and payment_method are
+-- ENUMs matching the options presented in checkout.html.
+-- status tracks fulfilment progress; defaults to 'Pending' on creation.
 CREATE TABLE IF NOT EXISTS Orders (
     order_id        INT PRIMARY KEY AUTO_INCREMENT,
     buyer_id        INT NOT NULL,
@@ -99,6 +144,10 @@ CREATE TABLE IF NOT EXISTS Orders (
     FOREIGN KEY (buyer_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
+-- ---- Order_Items ----
+-- Line items for each order. price_at_purchase snapshot is stored so
+-- the receipt remains accurate even if the listing price changes later.
+-- product_id is SET NULL on delete so order history is preserved.
 CREATE TABLE IF NOT EXISTS Order_Items (
     item_id            INT PRIMARY KEY AUTO_INCREMENT,
     order_id           INT NOT NULL,
@@ -109,6 +158,9 @@ CREATE TABLE IF NOT EXISTS Order_Items (
     FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE SET NULL
 );
 
+-- ---- Contact_Messages ----
+-- Submissions from the public contact form. No authentication required.
+-- Reviewed by admins via the Admin Dashboard.
 CREATE TABLE IF NOT EXISTS Contact_Messages (
     message_id INT PRIMARY KEY AUTO_INCREMENT,
     name       VARCHAR(100) NOT NULL,
@@ -118,6 +170,10 @@ CREATE TABLE IF NOT EXISTS Contact_Messages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ---- Messages ----
+-- Direct messaging between buyers and sellers. product_id optionally
+-- links the conversation to a specific listing. is_read is set to 1
+-- when the receiver opens the thread so unread badges can be computed.
 CREATE TABLE IF NOT EXISTS Messages (
     message_id  INT PRIMARY KEY AUTO_INCREMENT,
     sender_id   INT NOT NULL,

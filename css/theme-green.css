@@ -1,3 +1,20 @@
+/*
+ * Nature / Green Theme
+ * --------------------
+ * Fresh forest-green palette with a pale mint surface and very dark
+ * green ink. Suited to eco-friendly or outdoors-focused contexts.
+ *
+ * Variable guide:
+ *   --bg         : page background
+ *   --surface    : card / panel background
+ *   --ink        : primary text colour
+ *   --muted      : secondary / placeholder text
+ *   --brand      : primary accent (medium green)
+ *   --brand-deep : darker accent (deep forest green, hover states)
+ *   --line       : border / divider colour
+ *   --accent     : call-to-action accent (shares --brand)
+ *   --r          : default border-radius
+ */
 :root {
     --bg: #fff;
     --surface: #d5ecd8;
