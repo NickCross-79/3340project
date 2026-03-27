@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Lancer Loot</title>
+    <link id="theme-style" rel="stylesheet" href="../css/default-theme.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.getElementById('theme-style').href='../css/'+t;})();</script>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/form-and-help.css">
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <div class="section">
+        <h1 style="margin-bottom: 1.2rem;">Messages</h1>
+
+        <div id="messages-auth-guard" style="display:none;">
+            <p>Please <a href="login.html">sign in</a> to view your messages.</p>
+        </div>
+
+        <div class="messages-layout" id="messages-layout">
+            <!-- Left: conversation list -->
+            <div class="conv-list" id="conv-list">
+                <div class="conv-list-header">Conversations</div>
+                <div id="conv-items">
+                    <p style="padding:16px;color:var(--muted);font-size:0.9rem;">Loading…</p>
+                </div>
+            </div>
+
+            <!-- Right: thread panel -->
+            <div class="thread-panel" id="thread-panel">
+                <div class="thread-empty" id="thread-empty">
+                    <i class="fa-regular fa-comment-dots" style="font-size:2.5rem;color:var(--muted);display:block;margin-bottom:12px;"></i>
+                    Select a conversation to read messages, or start a new one from a product page.
+                </div>
+
+                <!-- Thread header (shown when a convo is open) -->
+                <div class="thread-header" id="thread-header" style="display:none;">
+                    <span id="thread-title"></span>
+                    <span id="thread-product-label" class="thread-product-badge" style="display:none;"></span>
+                </div>
+
+                <!-- Messages bubble area -->
+                <div class="thread-messages" id="thread-messages" style="display:none;"></div>
+
+                <!-- Compose form -->
+                <form class="thread-compose" id="thread-compose" style="display:none;">
+                    <textarea id="compose-body" rows="2" placeholder="Type a message…" maxlength="2000" required></textarea>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 Lancer Loot</footer>
+
+    <script src="../js/scripts.js"></script>
+</body>
+</html>

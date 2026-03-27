@@ -117,3 +117,16 @@ CREATE TABLE IF NOT EXISTS Contact_Messages (
     message    TEXT         NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS Messages (
+    message_id  INT PRIMARY KEY AUTO_INCREMENT,
+    sender_id   INT NOT NULL,
+    receiver_id INT NOT NULL,
+    product_id  INT DEFAULT NULL,
+    body        TEXT NOT NULL,
+    is_read     TINYINT(1) NOT NULL DEFAULT 0,
+    sent_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id)   REFERENCES Users(user_id)    ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES Users(user_id)    ON DELETE CASCADE,
+    FOREIGN KEY (product_id)  REFERENCES Products(product_id) ON DELETE SET NULL
+);

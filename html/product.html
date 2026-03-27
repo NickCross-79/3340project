@@ -29,11 +29,14 @@
                     <li id="product-status"></li>
                     <li id="product-posted"></li>
                 </ul>
-                <form method="post" action="../php/cart/add.php" style="display:inline;">
-                    <input type="hidden" name="product_id" id="add-to-cart-product-id" value="">
-                    <input type="hidden" name="quantity" value="1">
-                    <button type="submit" id="add-to-cart-btn" class="btn btn-primary">Add to Cart</button>
-                </form>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px;">
+                    <form method="post" action="../php/cart/add.php" style="display:inline;">
+                        <input type="hidden" name="product_id" id="add-to-cart-product-id" value="">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" id="add-to-cart-btn" class="btn btn-primary">Add to Cart</button>
+                    </form>
+                    <a id="msg-seller-btn" href="#" class="btn" style="display:none;">Message Seller</a>
+                </div>
             </div>
         </div>
 

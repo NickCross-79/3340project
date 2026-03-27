@@ -291,6 +291,24 @@ function loadProduct() {
             document.getElementById('product-seller-name').textContent      = p.seller;
             document.getElementById('add-to-cart-product-id').value         = p.product_id;
 
+            // Message Seller button (only shown when logged in and not own listing)
+            const msgBtn = document.getElementById('msg-seller-btn');
+            if (msgBtn && p.seller_id) {
+                fetch(phpBase + 'auth/check.php')
+                    .then(r => r.json())
+                    .then(auth => {
+                        if (auth.loggedIn && auth.userId !== p.seller_id) {
+                            const msgBase = isRoot ? 'html/messages.html' : 'messages.html';
+                            msgBtn.href = msgBase
+                                + '?with=' + p.seller_id
+                                + '&product_id=' + p.product_id
+                                + '&seller=' + encodeURIComponent(p.seller)
+                                + '&title=' + encodeURIComponent(p.title);
+                            msgBtn.style.display = 'inline-block';
+                        }
+                    });
+            }
+
             if (p.status !== 'Available') {
                 const btn = document.getElementById('add-to-cart-btn');
                 if (btn) { btn.disabled = true; btn.textContent = 'No Longer Available'; }
@@ -341,4 +359,197 @@ document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("cart-body"))       loadCart();
     if (document.getElementById("profile-section")) loadProfile();
     if (document.getElementById("product-title"))   loadProduct();
+    if (document.getElementById("messages-layout")) loadMessages();
 });
+
+// ---- Messages page ----
+// State for the currently open thread
+let _msgState = { receiverId: null, productId: null };
+
+function loadMessages() {
+    const layout   = document.getElementById("messages-layout");
+    const authGuard = document.getElementById("messages-auth-guard");
+
+    // Check auth first
+    fetch(phpBase + "auth/check.php")
+        .then(r => r.json())
+        .then(auth => {
+            if (!auth.loggedIn) {
+                if (layout)    layout.style.display   = "none";
+                if (authGuard) authGuard.style.display = "block";
+                return;
+            }
+            // Load conversation list
+            _loadConversations();
+
+            // If URL has ?with= open that thread automatically
+            const params = new URLSearchParams(location.search);
+            const withId = parseInt(params.get("with"));
+            const prodId = parseInt(params.get("product_id")) || null;
+            if (withId > 0) {
+                _openThread(withId, prodId, params.get("seller") || null, params.get("title") || null);
+            }
+        });
+}
+
+function _loadConversations() {
+    const convItems = document.getElementById("conv-items");
+    if (!convItems) return;
+    convItems.innerHTML = '<p style="padding:16px;color:var(--muted);font-size:0.9rem;">Loading…</p>';
+
+    fetch(phpBase + "messages/get-conversations.php")
+        .then(r => {
+            if (r.status === 401) return null;
+            return r.json();
+        })
+        .then(data => {
+            if (!data) {
+                convItems.innerHTML = '<p style="padding:16px;color:var(--muted);font-size:0.9rem;">Sign in to view messages.</p>';
+                return;
+            }
+            const convos = data.conversations || [];
+            if (convos.length === 0) {
+                convItems.innerHTML = '<p style="padding:16px;color:var(--muted);font-size:0.9rem;">No conversations yet.</p>';
+                return;
+            }
+            convItems.innerHTML = convos.map(c => {
+                const unreadBadge = c.unread > 0
+                    ? `<span class="conv-unread">${parseInt(c.unread)}</span>`
+                    : '';
+                const sub = c.product_title
+                    ? escHtml(c.product_title)
+                    : (c.last_body ? escHtml(c.last_body.substring(0, 40)) : '');
+                return `<div class="conv-item"
+                             data-uid="${parseInt(c.other_id)}"
+                             data-pid="${c.product_id ? parseInt(c.product_id) : ''}"
+                             data-name="${escHtml(c.other_username)}"
+                             data-title="${escHtml(c.product_title || '')}"
+                             onclick="handleConvClick(this)">
+                    ${unreadBadge}
+                    <div class="conv-name">${escHtml(c.other_username)}</div>
+                    <div class="conv-sub">${sub}</div>
+                </div>`;
+            }).join('');
+        })
+        .catch(() => {
+            convItems.innerHTML = '<p style="padding:16px;color:var(--muted);font-size:0.9rem;">Could not load conversations.</p>';
+        });
+}
+
+function handleConvClick(el) {
+    document.querySelectorAll('.conv-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+
+    const uid   = parseInt(el.dataset.uid);
+    const pid   = el.dataset.pid ? parseInt(el.dataset.pid) : null;
+    const name  = el.dataset.name;
+    const title = el.dataset.title || null;
+    _openThread(uid, pid, name, title);
+}
+
+function _openThread(receiverId, productId, name, productTitle) {
+    _msgState.receiverId = receiverId;
+    _msgState.productId  = productId || null;
+
+    const threadEmpty   = document.getElementById("thread-empty");
+    const threadHeader  = document.getElementById("thread-header");
+    const threadTitle   = document.getElementById("thread-title");
+    const threadBadge   = document.getElementById("thread-product-label");
+    const threadMsgs    = document.getElementById("thread-messages");
+    const threadCompose = document.getElementById("thread-compose");
+
+    if (threadEmpty)   threadEmpty.style.display   = "none";
+    if (threadHeader)  threadHeader.style.display  = "flex";
+    if (threadMsgs)    threadMsgs.style.display    = "flex";
+    if (threadCompose) threadCompose.style.display = "flex";
+
+    if (threadTitle) threadTitle.textContent = name || ("User " + receiverId);
+
+    if (threadBadge) {
+        if (productTitle) {
+            threadBadge.textContent    = productTitle;
+            threadBadge.style.display  = "inline";
+        } else {
+            threadBadge.style.display  = "none";
+        }
+    }
+
+    if (threadMsgs) threadMsgs.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">Loading…</p>';
+
+    const qs = "?with=" + receiverId + (productId ? "&product_id=" + productId : "");
+    fetch(phpBase + "messages/get-thread.php" + qs)
+        .then(r => {
+            if (r.status === 401) return null;
+            return r.json();
+        })
+        .then(data => {
+            if (!data || !threadMsgs) return;
+
+            // Refresh conversation list to clear unread badges
+            _loadConversations();
+
+            // Resolve current user id from auth (cached in DOM if available)
+            fetch(phpBase + "auth/check.php")
+                .then(r => r.json())
+                .then(auth => {
+                    const myId = auth.userId;
+                    const msgs = data.messages || [];
+
+                    if (msgs.length === 0) {
+                        threadMsgs.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;text-align:center;">No messages yet. Say hello!</p>';
+                        return;
+                    }
+
+                    threadMsgs.innerHTML = msgs.map(m => {
+                        const mine = m.sender_id == myId;
+                        const ts   = m.sent_at ? m.sent_at.substring(0, 16).replace('T', ' ') : '';
+                        return `<div class="msg-bubble ${mine ? 'mine' : 'theirs'}">
+                            ${escHtml(m.body)}
+                            <span class="msg-meta">${mine ? 'You' : escHtml(m.sender_name)} &bull; ${ts}</span>
+                        </div>`;
+                    }).join('');
+
+                    // Scroll to bottom
+                    threadMsgs.scrollTop = threadMsgs.scrollHeight;
+                });
+        })
+        .catch(() => {
+            if (threadMsgs) threadMsgs.innerHTML = '<p style="color:var(--muted);">Could not load messages.</p>';
+        });
+
+    // Wire up the compose form (remove old listener first)
+    const composeForm = document.getElementById("thread-compose");
+    if (composeForm) {
+        const newForm = composeForm.cloneNode(true);
+        composeForm.parentNode.replaceChild(newForm, composeForm);
+        newForm.style.display = "flex";
+        newForm.addEventListener("submit", _handleSend);
+    }
+}
+
+function _handleSend(e) {
+    e.preventDefault();
+    const bodyEl = document.getElementById("compose-body");
+    const body   = bodyEl ? bodyEl.value.trim() : "";
+    if (!body) return;
+
+    const form = new FormData();
+    form.append("receiver_id", _msgState.receiverId);
+    form.append("body", body);
+    if (_msgState.productId) form.append("product_id", _msgState.productId);
+
+    fetch(phpBase + "messages/send.php", { method: "POST", body: form })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                if (bodyEl) bodyEl.value = "";
+                // Reload thread
+                _openThread(_msgState.receiverId, _msgState.productId,
+                    document.getElementById("thread-title")?.textContent,
+                    document.getElementById("thread-product-label")?.textContent || null);
+            } else {
+                alert(data.error || "Could not send message.");
+            }
+        })
+        .catch(() => alert("Could not send message."));
+}
